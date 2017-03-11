@@ -1,17 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.outofthinair.tadaynews.activity.MainActivity">
+    android:orientation="vertical"
+   >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-</RelativeLayout>
+   <FrameLayout
+       android:id="@+id/main_lay_frame"
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:layout_weight="1">
+
+   </FrameLayout>
+
+    <RadioGroup
+        android:id="@+id/main_lay_rg"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+       <RadioButton
+           android:id="@+id/main_lay_down_shouye"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:button="@null"
+           android:layout_weight="1"
+           android:gravity="center"
+           android:drawableTop="@drawable/main_down_button_zhu_selextor"
+            android:text="首页"
+          android:textColor="@drawable/main_down_text_selector"
+
+           />
+
+        <RadioButton
+            android:id="@+id/main_lay_down_yang"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/main_down_button_yang_selextor"
+            android:text="阳光"
+            android:textColor="@drawable/main_down_text_selector"
+
+            />
+
+        <RadioButton
+            android:id="@+id/main_lay_down_guanzhu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/main_down_button_guanzhu_selextor"
+            android:text="关注"
+            android:textColor="@drawable/main_down_text_selector"
+
+            />
+
+        <RadioButton
+            android:id="@+id/main_lay_down_wode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/main_down_button_wode_selextor"
+           android:text="我的"
+            android:textColor="@drawable/main_down_text_selector"
+
+            />
+    </RadioGroup>
+</LinearLayout>

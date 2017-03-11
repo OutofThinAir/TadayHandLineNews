@@ -15,8 +15,8 @@
        android:layout_centerHorizontal="true"
       android:layout_alignParentBottom="true"
       android:layout_marginBottom="40dp"
-      android:background="@mipmap/guidance_into"
-
+        android:background="@mipmap/guidance_into"
+      android:visibility="gone"
 
        />
 
