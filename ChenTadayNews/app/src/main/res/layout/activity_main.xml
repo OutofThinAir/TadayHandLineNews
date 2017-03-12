@@ -30,7 +30,7 @@
            android:gravity="center"
            android:drawableTop="@drawable/main_down_button_zhu_selextor"
             android:text="首页"
-          android:textColor="@drawable/main_down_text_selector"
+           android:textColor="@drawable/main_down_text_selector"
 
            />
 

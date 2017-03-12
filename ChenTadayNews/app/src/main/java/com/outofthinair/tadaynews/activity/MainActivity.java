@@ -60,9 +60,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         transaction.hide(myFragment);
 
         transaction.commit();
+        //设置监听事件
+        home.setOnClickListener(this);
+        sun.setOnClickListener(this);
+        guanzhu.setOnClickListener(this);
+        mys.setOnClickListener(this);
 
         //默认选择第一个导航
         home.setSelected(true);
+        home.setChecked(true);
 
     }
 
