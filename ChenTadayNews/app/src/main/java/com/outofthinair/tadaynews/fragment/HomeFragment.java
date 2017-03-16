@@ -43,11 +43,9 @@ public class HomeFragment extends Fragment {
         ArrayList<String> titles = new ArrayList<>();
         titles.add("推荐");
         titles.add("热点");
-        titles.add("阳光宽屏");
-        titles.add("北京");
+        titles.add("视频");
         titles.add("社会");
         titles.add("娱乐");
-        titles.add("问答");
         titles.add("图片");
         titles.add("科技");
         titles.add("汽车");
@@ -65,25 +63,11 @@ public class HomeFragment extends Fragment {
 
         //页卡的视图
         ArrayList<Fragment> fragments = new ArrayList<>();
-        fragments.add(HomeItemFragment.getNewFragment("推荐"));
-        fragments.add(HomeItemFragment.getNewFragment("热点"));
-        fragments.add(HomeItemFragment.getNewFragment("阳光"));
-        fragments.add(HomeItemFragment.getNewFragment("北京"));
-        fragments.add(HomeItemFragment.getNewFragment("社会"));
-        fragments.add(HomeItemFragment.getNewFragment("问答"));
-        fragments.add(HomeItemFragment.getNewFragment("图片"));
-        fragments.add(HomeItemFragment.getNewFragment("科技"));
-        fragments.add(HomeItemFragment.getNewFragment("汽车"));
-        fragments.add(HomeItemFragment.getNewFragment("体育"));
-        fragments.add(HomeItemFragment.getNewFragment("财经"));
-        fragments.add(HomeItemFragment.getNewFragment("军事"));
-        fragments.add(HomeItemFragment.getNewFragment("国际"));
-        fragments.add(HomeItemFragment.getNewFragment("段子"));
-        fragments.add(HomeItemFragment.getNewFragment("趣图"));
-        fragments.add(HomeItemFragment.getNewFragment("健康"));
-        fragments.add(HomeItemFragment.getNewFragment("正能量"));
-        fragments.add(HomeItemFragment.getNewFragment("特卖"));
-        fragments.add(HomeItemFragment.getNewFragment("房产"));
+        for (int i = 0; i <titles.size() ; i++) {
+            fragments.add(HomeItemFragment.getNewFragment(titles.get(i)));
+        }
+
+
 
 
         //设置模式,为系统默认模式

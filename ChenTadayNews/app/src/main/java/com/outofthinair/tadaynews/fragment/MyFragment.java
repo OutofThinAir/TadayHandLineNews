@@ -3,9 +3,12 @@ package com.outofthinair.tadaynews.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -13,12 +16,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.outofthinair.tadaynews.R;
+import com.outofthinair.tadaynews.activity.MainActivity;
 
 /**
  * Created by Administrator on 2017/3/10.
  */
 
-public class MyFragment extends Fragment {
+public class MyFragment extends Fragment implements View.OnClickListener{
+    //默认主题
+    private int theme =R.style.AppTheme;
+    private OnChuanzhi chunzhi;
+    private TextView yejian;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -26,6 +35,7 @@ public class MyFragment extends Fragment {
        View view = inflater.inflate(R.layout.my_frag_layout,null);
         //初始化控件
         initView(view);
+        yejian.setOnClickListener(this);
 
 
         return view;
@@ -49,7 +59,7 @@ public class MyFragment extends Fragment {
         //都有的界面
         TextView shoucang = (TextView) view.findViewById(R.id.my_frag_lay_shoucang);
         TextView lishi = (TextView) view.findViewById(R.id.my_frag_lay_lishi);
-        TextView yejian = (TextView) view.findViewById(R.id.my_frag_lay_yejian);
+        yejian = (TextView) view.findViewById(R.id.my_frag_lay_yejian);
 
         RelativeLayout xiaoxi = (RelativeLayout) view.findViewById(R.id.my_frag_lay_xiaoxitongzhi);
         RelativeLayout shangcheng = (RelativeLayout) view.findViewById(R.id.my_frag_lay_shangcheng);
@@ -60,5 +70,30 @@ public class MyFragment extends Fragment {
 
 
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            //日夜间切换
+            case R.id.my_frag_lay_yejian:
+                theme = (theme == R.style.AppTheme) ? R.style.NightAppTheme : R.style.AppTheme;
+                MainActivity a = (MainActivity) getActivity();
+
+                a.recreate();
+                chunzhi.chuanzhi(theme);
+                break;
+        }
+
+    }
+
+   //传值接口
+    public interface OnChuanzhi{
+       void chuanzhi(int theme);
+   }
+
+    //对外调用接口
+    public void setOnChuanzhi(OnChuanzhi chuizhi){
+        this.chunzhi=chuizhi;
     }
 }

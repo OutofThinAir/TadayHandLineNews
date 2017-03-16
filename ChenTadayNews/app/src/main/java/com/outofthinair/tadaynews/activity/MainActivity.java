@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -29,10 +30,30 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private SunFragment sunFragment;
     private GuanZhuFragment guanZhuFragment;
     private MyFragment myFragment;
+    private int theme_01;//模式
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //添加Fragment
+        manager = getSupportFragmentManager();
+        // 判断是否有主题存储
+        if(savedInstanceState != null){
+            theme_01 = savedInstanceState.getInt("theme");
+            setTheme(theme_01);
+            homeFragment = (HomeFragment) manager.findFragmentByTag(HomeFragment.class.getName());
+            sunFragment = (SunFragment) manager.findFragmentByTag(SunFragment.class.getName());
+            guanZhuFragment = (GuanZhuFragment) manager.findFragmentByTag(GuanZhuFragment.class.getName());
+            myFragment = (MyFragment) manager.findFragmentByTag(MyFragment.class.getName());
+
+            Log.d("SSSSS","SDDDDDDD");
+        }else {
+//        homeFragment = new HomeFragment();
+//        sunFragment = new SunFragment();
+//        guanZhuFragment = new GuanZhuFragment();
+//        myFragment = new MyFragment();
+    }
+
         setContentView(R.layout.activity_main);
         //初始化控件
         initView();
@@ -44,12 +65,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         menu.setMenu(R.layout.cehua_layout);
         menu.attachToActivity(MainActivity.this,SlidingMenu.SLIDING_CONTENT);
 
-        //添加Fragment
         homeFragment = new HomeFragment();
         sunFragment = new SunFragment();
         guanZhuFragment = new GuanZhuFragment();
         myFragment = new MyFragment();
-        manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.main_lay_frame, homeFragment,"hf");
         transaction.add(R.id.main_lay_frame, sunFragment,"sf");
@@ -70,6 +89,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         home.setSelected(true);
         home.setChecked(true);
 
+        myFragment.setOnChuanzhi(new MyFragment.OnChuanzhi() {
+
+            @Override
+            public void chuanzhi(int theme) {
+                theme_01 = theme;
+            }
+        });
+
+
+
     }
 
     //初始化控件
@@ -82,7 +111,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     //Fragment之间的切换
-    private void cutFragment(Fragment newFrag,Fragment oldFrag01,Fragment oldFrag02,Fragment oldFrag03){
+    public void cutFragment(Fragment newFrag,Fragment oldFrag01,Fragment oldFrag02,Fragment oldFrag03){
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.show(newFrag);
         transaction.hide(oldFrag01);
@@ -125,4 +154,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //super.onSaveInstanceState(outState);
+        outState.putInt("theme", theme_01);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        //super.onRestoreInstanceState(savedInstanceState);
+        theme_01 = savedInstanceState.getInt("theme");
+    }
+
 }
+
+
