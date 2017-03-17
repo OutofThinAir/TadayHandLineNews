@@ -8,8 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.outofthinair.tadaynews.R;
@@ -17,6 +19,9 @@ import com.outofthinair.tadaynews.fragment.GuanZhuFragment;
 import com.outofthinair.tadaynews.fragment.HomeFragment;
 import com.outofthinair.tadaynews.fragment.MyFragment;
 import com.outofthinair.tadaynews.fragment.SunFragment;
+import com.igexin.sdk.PushManager;
+
+import cn.smssdk.SMSSDK;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
 
@@ -30,40 +35,40 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private SunFragment sunFragment;
     private GuanZhuFragment guanZhuFragment;
     private MyFragment myFragment;
-    private int theme_01;//模式
+    private SlidingMenu menu;
+    private TextView ryqh;
+
+    // 默认是日间模式
+    private int theme = R.style.AppTheme;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //添加Fragment
-        manager = getSupportFragmentManager();
+
         // 判断是否有主题存储
         if(savedInstanceState != null){
-            theme_01 = savedInstanceState.getInt("theme");
-            setTheme(theme_01);
-            homeFragment = (HomeFragment) manager.findFragmentByTag(HomeFragment.class.getName());
-            sunFragment = (SunFragment) manager.findFragmentByTag(SunFragment.class.getName());
-            guanZhuFragment = (GuanZhuFragment) manager.findFragmentByTag(GuanZhuFragment.class.getName());
-            myFragment = (MyFragment) manager.findFragmentByTag(MyFragment.class.getName());
+            theme = savedInstanceState.getInt("theme");
+            setTheme(theme);
+        }
+        //添加Fragment
+        manager = getSupportFragmentManager();
 
-            Log.d("SSSSS","SDDDDDDD");
-        }else {
-//        homeFragment = new HomeFragment();
-//        sunFragment = new SunFragment();
-//        guanZhuFragment = new GuanZhuFragment();
-//        myFragment = new MyFragment();
-    }
 
         setContentView(R.layout.activity_main);
-        //初始化控件
-        initView();
+       // SMSSDK.initSDK(this, "1c108d6b1e575", "b09e557f971a157a7a050fa2961b3fe3");
+
+        // com.getui.demo.DemoPushService 为第三方自定义推送服务
+        PushManager.getInstance().initialize(this.getApplicationContext(),com.outofthinair.tadaynews.service.MyService.class);
 
         //侧滑效果的实现
-        SlidingMenu menu = new SlidingMenu(MainActivity.this);
+        menu = new SlidingMenu(MainActivity.this);
         menu.setMode(SlidingMenu.LEFT);
         menu.setBehindOffset(200);
         menu.setMenu(R.layout.cehua_layout);
         menu.attachToActivity(MainActivity.this,SlidingMenu.SLIDING_CONTENT);
+        //初始化控件
+        initView();
 
         homeFragment = new HomeFragment();
         sunFragment = new SunFragment();
@@ -84,18 +89,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         sun.setOnClickListener(this);
         guanzhu.setOnClickListener(this);
         mys.setOnClickListener(this);
+        //侧滑页监听
+        ryqh.setOnClickListener(this);
 
         //默认选择第一个导航
         home.setSelected(true);
         home.setChecked(true);
 
-        myFragment.setOnChuanzhi(new MyFragment.OnChuanzhi() {
 
-            @Override
-            public void chuanzhi(int theme) {
-                theme_01 = theme;
-            }
-        });
 
 
 
@@ -108,6 +109,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         sun = (RadioButton) findViewById(R.id.main_lay_down_yang);
         guanzhu = (RadioButton) findViewById(R.id.main_lay_down_guanzhu);
         mys = (RadioButton) findViewById(R.id.main_lay_down_wode);
+        //侧滑界面的控件
+        ryqh = (TextView) menu.findViewById(R.id.cehua_lay_ryqh);
+        TextView shenliang = (TextView) menu.findViewById(R.id.cehua_lay_shenliuliang);
+        TextView qingchu = (TextView) menu.findViewById(R.id.cehua_lay_qingchu);
+        TextView lixian = (TextView) menu.findViewById(R.id.cehua_lay_lixian);
+        TextView jiancha = (TextView) menu.findViewById(R.id.cehua_lay_gengxian);
+        Button tuichu= (Button) menu.findViewById(R.id.chehua_lay_tuchi);
+
     }
 
     //Fragment之间的切换
@@ -151,6 +160,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 guanzhu.setSelected(false);
                 mys.setSelected(true);
                 break;
+            case R.id.cehua_lay_ryqh:
+
+                theme = (theme == R.style.AppTheme) ? R.style.NightAppTheme : R.style.AppTheme;
+                MainActivity.this.recreate();
+                break;
 
         }
     }
@@ -158,14 +172,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //super.onSaveInstanceState(outState);
-        outState.putInt("theme", theme_01);
+        outState.putInt("theme", theme);
+
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         //super.onRestoreInstanceState(savedInstanceState);
-        theme_01 = savedInstanceState.getInt("theme");
+        theme = savedInstanceState.getInt("theme");
+
     }
+
 
 }
 

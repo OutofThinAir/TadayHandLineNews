@@ -10,17 +10,56 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                GETUI_APP_ID : "e8N3zwTD1P7kQwFIAfjKA4",
+                GETUI_APP_KEY : "Koqbv2A5ic9kvVyhkWFtF3",
+                GETUI_APP_SECRET : "A8hiIKPsxy7EvPCs14sbPA"
+        ]
+
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86_64"
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.debug
+
+        }
+
+        debug {
+            minifyEnabled true
+            signingConfig signingConfigs.debug
+            proguardFiles 'proguard-rules.pro'
+        }
+
+    }
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+
+    repositories{
+        flatDir{
+               dirs 'libs'
         }
     }
 }
 
+
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile name: 'SMSSDK-2.1.3', ext: 'aar'
+    compile name: 'SMSSDKGUI-2.1.3', ext: 'aar'
+    compile 'com.getui:sdk:2.10.2.0'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -29,4 +68,12 @@ dependencies {
     compile 'org.xutils:xutils:3.3.36'
     compile project(':slidingmenulibrary')
     compile 'com.android.support:design:25.1.0'
+    compile files('libs/MobCommons-2016.1201.1839.jar')
+    compile files('libs/MobTools-2016.1201.1839.jar')
+    compile files('libs/gson-2.2.4.jar')
+    compile 'fm.jiecao:jiecaovideoplayer:2.0'
+    compile files('libs/SocialSDK_QQ_Simplify.jar')
+    compile files('libs/umeng_social_api.jar')
+    compile files('libs/umeng_social_net.jar')
+    compile files('libs/umeng_social_tool.jar')
 }

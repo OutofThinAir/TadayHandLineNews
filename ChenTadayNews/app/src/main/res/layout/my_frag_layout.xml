@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/ic_launcher"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="90dp"
         android:layout_marginLeft="30dp"
         android:visibility="gone"/>
 
@@ -160,16 +160,7 @@
             android:text="历史"
             android:drawableTop="@mipmap/my_frag_lishi"
             android:gravity="center"/>
-        <TextView
-            android:id="@+id/my_frag_lay_yejian"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="夜间"
-            android:textSize="25sp"
-            android:button="@null"
-            android:drawableTop="@mipmap/my_frag_yejian"
-            android:gravity="center"/>
+       >
     </LinearLayout>
 
     <RelativeLayout
@@ -315,26 +306,6 @@
         android:layout_height="1dp"
         android:background="#cfcfcf"></View>
 
-    <RelativeLayout
-        android:id="@+id/my_frag_lay_xitong"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
 
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="系统设置"
-            android:textSize="25sp"
-            android:layout_centerVertical="true"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/my_next_pic"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"/>
-    </RelativeLayout>
 
 </LinearLayout>

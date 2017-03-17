@@ -2,10 +2,73 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#cfcfcf">
+    android:background="@mipmap/chehua_lay_back"
+    >
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="系统设置"
+        android:textSize="40sp"
+       android:gravity="center"
+        android:textColor="#98BB35"
+        android:background="#D43D3D"
+        />
+
+
+
+    <TextView
+        android:id="@+id/cehua_lay_ryqh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="这是侧滑页面"/>
+        android:text="日夜间切换"
+        android:textSize="30sp"
+        android:layout_marginTop="80dp"
+        />
+
+    <TextView
+        android:id="@+id/cehua_lay_shenliuliang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="省流量模式"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/cehua_lay_qingchu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="清除缓存"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/cehua_lay_lixian"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="离线下载"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/cehua_lay_gengxian"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="检查更新"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        />
+    <Button
+
+        android:id="@+id/chehua_lay_tuchi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="退出登录"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        />
+
 
 </LinearLayout>

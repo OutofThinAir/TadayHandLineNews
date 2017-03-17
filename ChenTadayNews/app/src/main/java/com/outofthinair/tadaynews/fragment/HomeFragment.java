@@ -47,19 +47,12 @@ public class HomeFragment extends Fragment {
         titles.add("社会");
         titles.add("娱乐");
         titles.add("图片");
-        titles.add("科技");
         titles.add("汽车");
         titles.add("体育");
         titles.add("财经");
-        titles.add("军事");
-        titles.add("国际");
-        titles.add("段子");
         titles.add("趣图");
         titles.add("美女");
-        titles.add("健康");
-        titles.add("正能量");
-        titles.add("特卖");
-        titles.add("房产");
+        titles.add("段子");
 
         //页卡的视图
         ArrayList<Fragment> fragments = new ArrayList<>();
@@ -76,6 +69,8 @@ public class HomeFragment extends Fragment {
         //ViewPager设置S适配器
         HomeFragmentPagerAdapter adapter = new HomeFragmentPagerAdapter(getFragmentManager(),fragments,titles);
         pager.setAdapter(adapter);
+        //改变加载数量
+        pager.setOffscreenPageLimit(5);
         tabLayout.setupWithViewPager(pager);
         tabLayout.setTabsFromPagerAdapter(adapter);
 
