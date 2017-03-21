@@ -1,5 +1,6 @@
 package com.outofthinair.tadaynews.activity;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +21,7 @@ import com.outofthinair.tadaynews.fragment.HomeFragment;
 import com.outofthinair.tadaynews.fragment.MyFragment;
 import com.outofthinair.tadaynews.fragment.SunFragment;
 import com.igexin.sdk.PushManager;
+import com.umeng.socialize.UMShareAPI;
 
 import cn.smssdk.SMSSDK;
 
@@ -101,6 +103,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
     }
+
 
     //初始化控件
     private void initView(){

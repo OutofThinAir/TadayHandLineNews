@@ -7,16 +7,16 @@ import com.umeng.socialize.UMShareAPI;
 
 import org.xutils.x;
 
+import cn.smssdk.SMSSDK;
+
 /**
  * Created by Administrator on 2017/3/10.
  */
 
 public class MyApplication extends Application {
     {
-
-        PlatformConfig.setWeixin("wx967daebe835fbeac", "5bb696d9ccd75a38c8a0bfe0675559b3");
         PlatformConfig.setQQZone("100424468", "c7394704798a158208a74ab60104f0ba");
-        PlatformConfig.setSinaWeibo("3921700954", "04b48b094faeb16683c32669824ebdad", "http://sns.whalecloud.com");
+
     }
     @Override
     public void onCreate() {
@@ -25,7 +25,7 @@ public class MyApplication extends Application {
         x.Ext.init(this);
         //不开启debug模式
         x.Ext.setDebug(false);
-
+        SMSSDK.initSDK(this, "1c108d6b1e575", "b09e557f971a157a7a050fa2961b3fe3");
         //qq登录初始化
         UMShareAPI.get(this);
     }
