@@ -77,6 +77,7 @@ public class SunFragment extends Fragment {
 
         SunFragmentPagerAdapter adapter = new SunFragmentPagerAdapter(getFragmentManager(),fragments,titles);
         pager.setAdapter(adapter);
+        pager.setOffscreenPageLimit(10);
 
 
         //实例化一个导航
