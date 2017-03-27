@@ -1,7 +1,13 @@
 package com.outofthinair.tadaynews.fragment;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +26,10 @@ import android.widget.Toast;
 
 import com.outofthinair.tadaynews.R;
 import com.outofthinair.tadaynews.activity.MainActivity;
+import com.outofthinair.tadaynews.bean.UserBean;
+import com.outofthinair.tadaynews.sqlite.MySqLite;
+import com.outofthinair.tadaynews.util.ShanChuanPic;
+import com.outofthinair.tadaynews.util.SqlUtil;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -54,7 +64,8 @@ public class MyFragment extends Fragment implements View.OnClickListener{
 
     public ArrayList<SnsPlatform> platforms = new ArrayList<SnsPlatform>();
     private SHARE_MEDIA[] list = {SHARE_MEDIA.QQ};
-
+    private SQLiteDatabase database;
+    private ImageView tiao_uxinxi;
 
 
     @Nullable
@@ -68,8 +79,24 @@ public class MyFragment extends Fragment implements View.OnClickListener{
 
         shoujiLog.setOnClickListener(this);
         qqLog.setOnClickListener(this);
+        tiao_uxinxi.setOnClickListener(this);
+        touxiang.setOnClickListener(this);
+        MySqLite sqLite = new MySqLite(getActivity());
+        database = sqLite.getWritableDatabase();
 
+        //查询数据设置头像(日夜间模式切换时重置设置头像)
+        UserBean userBean = new UserBean();
+        SqlUtil.queryByLoginToUser(database,"1",userBean);
+        if (userBean.getUname()!=null){
 
+            ImageOptions options = new ImageOptions.Builder()
+                    .setLoadingDrawableId(R.mipmap.app_ic)
+                    .setFailureDrawableId(R.mipmap.app_ic)
+                    .setCircular(true)
+                    .build();
+
+            x.image().bind(touxiang,userBean.getHeadPic(),options);
+        }
         return view;
     }
 
@@ -83,15 +110,18 @@ public class MyFragment extends Fragment implements View.OnClickListener{
 
         initPlatforms();
 
+        UserBean userBean = new UserBean();
+        SqlUtil.queryByLoginToUser(database,"1",userBean);
+        if (userBean.getUname()!=null){
+            ImageOptions options = new ImageOptions.Builder()
+                    .setLoadingDrawableId(R.mipmap.app_ic)
+                    .setFailureDrawableId(R.mipmap.app_ic)
+                    .setCircular(true)
+                    .build();
 
+            x.image().bind(touxiang,userBean.getHeadPic(),options);
+        }
 
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        //回调获得用户名密码
-        UMShareAPI.get(getActivity()).onActivityResult(requestCode, resultCode, data);
 
     }
 
@@ -100,7 +130,7 @@ public class MyFragment extends Fragment implements View.OnClickListener{
         //登录之后显示的界面
         touxiang = (ImageView) view.findViewById(R.id.my_frag_lay_touxiang);
         uname = (TextView) view.findViewById(R.id.my_frag_lay_uname);
-        ImageView tiao_uxinxi= (ImageView) view.findViewById(R.id.my_frag_lay_next);
+        tiao_uxinxi = (ImageView) view.findViewById(R.id.my_frag_lay_next);
         guanzhud = (LinearLayout) view.findViewById(R.id.my_frag_lay_loghou);
         TextView dongtai= (TextView) view.findViewById(R.id.my_frag_lay_dongtai);
         TextView guanzhu= (TextView) view.findViewById(R.id.my_frag_lay_guanzhu);
@@ -154,7 +184,24 @@ public class MyFragment extends Fragment implements View.OnClickListener{
                             HashMap<String,Object> phoneMap = (HashMap<String, Object>) data;
                             String country = (String) phoneMap.get("country");
                             String phone = (String) phoneMap.get("phone");
-                         uname.setText("用户"+phone);
+                         uname.setText("用户:"+phone);
+                            //添加数据
+                            SqlUtil.insertUser(database,"用户"+phone,null,"1");
+
+                            //查询数据设置头像
+                            UserBean userBean = new UserBean();
+                            SqlUtil.queryByLoginToUser(database,"1",userBean);
+                            if (userBean.getUname()!=null){
+
+                                ImageOptions options = new ImageOptions.Builder()
+                                        .setLoadingDrawableId(R.mipmap.app_ic)
+                                        .setFailureDrawableId(R.mipmap.app_ic)
+                                        .setCircular(true)
+                                        .build();
+
+                                x.image().bind(touxiang,userBean.getHeadPic(),options);
+                            }
+
 
                         }
                     }
@@ -168,7 +215,18 @@ public class MyFragment extends Fragment implements View.OnClickListener{
                 mShareAPI.doOauthVerify(getActivity(), platforms.get(0).mPlatform, umAuthListener);
                 mShareAPI.getPlatformInfo(getActivity(), platforms.get(0).mPlatform, umAuthListener);
 
+
                 break;
+            case R.id.my_frag_lay_touxiang:
+
+                //上传头像,调用系统相册
+                //调用相册
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 200);
+
+                break;
+
         }
 
     }
@@ -200,6 +258,7 @@ public class MyFragment extends Fragment implements View.OnClickListener{
                     .setCircular(true)
                     .build();
             x.image().bind(touxiang,data.get("iconurl"),options);
+            SqlUtil.insertUser(database,data.get("name"),data.get("iconurl"),"1");
         }
 
         @Override
@@ -226,4 +285,86 @@ public class MyFragment extends Fragment implements View.OnClickListener{
 
 
 }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden){
+            UserBean userBean = new UserBean();
+            SqlUtil.queryByLoginToUser(database,"1",userBean);
+            //判断是否登录
+            if (userBean.getUname()!=null){
+                //隐藏登录布局
+                genLog.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.GONE);
+
+                //显示用户信息布局
+                touxiang.setVisibility(View.VISIBLE);
+                uname.setVisibility(View.VISIBLE);
+                guanzhud.setVisibility(View.VISIBLE);
+                uname.setText(userBean.getUname());
+                ImageOptions options = new ImageOptions.Builder()
+                        .setLoadingDrawableId(R.mipmap.app_ic)
+                        .setFailureDrawableId(R.mipmap.app_ic)
+                        .setCircular(true)
+                        .build();
+
+                x.image().bind(touxiang,userBean.getHeadPic(),options);
+            }else{
+                //隐藏登录布局
+                genLog.setVisibility(View.VISIBLE);
+                linearLayout.setVisibility(View.VISIBLE);
+
+                //显示用户信息布局
+                touxiang.setVisibility(View.GONE);
+                uname.setVisibility(View.GONE);
+                guanzhud.setVisibility(View.GONE);
+            }
+        }else{
+
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //回调获得用户名密码
+        UMShareAPI.get(getActivity()).onActivityResult(requestCode, resultCode, data);
+
+        //获得相册的回传值,---图片路径
+        //获取图片路径
+        if (requestCode == 200 && resultCode == getActivity().RESULT_OK && data != null) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumns = {MediaStore.Images.Media.DATA};
+            Cursor c = getActivity().getContentResolver().query(selectedImage, filePathColumns, null, null, null);
+            c.moveToFirst();
+            int columnIndex = c.getColumnIndex(filePathColumns[0]);
+            //图片路径
+            String imagePath = c.getString(columnIndex);
+
+            //将图片上传到服务器
+            ShanChuanPic.shanchuanPic(imagePath);
+            //更改数据库
+            SqlUtil.updateHeadUrl(database,uname.getText().toString(),imagePath);
+            //x.image().bind(touxiang,imagePath);
+            //Bitmap bm = BitmapFactory.decodeFile(imagePath);
+
+
+                ImageOptions options = new ImageOptions.Builder()
+                        .setLoadingDrawableId(R.mipmap.app_ic)
+                        .setFailureDrawableId(R.mipmap.app_ic)
+                        .setCircular(true)
+                        .build();
+
+                x.image().bind(touxiang,imagePath,options);
+
+
+
+            //touxiang.setImageBitmap(bm);
+            c.close();
+        }
+
+    }
+
 }

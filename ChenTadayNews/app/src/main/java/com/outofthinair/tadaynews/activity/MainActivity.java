@@ -1,10 +1,13 @@
 package com.outofthinair.tadaynews.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,12 +19,18 @@ import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.outofthinair.tadaynews.R;
+import com.outofthinair.tadaynews.bean.UserBean;
 import com.outofthinair.tadaynews.fragment.GuanZhuFragment;
 import com.outofthinair.tadaynews.fragment.HomeFragment;
 import com.outofthinair.tadaynews.fragment.MyFragment;
 import com.outofthinair.tadaynews.fragment.SunFragment;
 import com.igexin.sdk.PushManager;
+import com.outofthinair.tadaynews.sqlite.MySqLite;
+import com.outofthinair.tadaynews.util.NetChecket;
+import com.outofthinair.tadaynews.util.SqlUtil;
 import com.umeng.socialize.UMShareAPI;
+
+import org.json.JSONException;
 
 import cn.smssdk.SMSSDK;
 
@@ -42,6 +51,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     // 默认是日间模式
     private int theme = R.style.AppTheme;
+    private Button tuichu;
+    private SQLiteDatabase database;
 
 
     @Override
@@ -71,6 +82,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         menu.attachToActivity(MainActivity.this,SlidingMenu.SLIDING_CONTENT);
         //初始化控件
         initView();
+        MySqLite sqLite = new MySqLite(MainActivity.this);
+        database = sqLite.getWritableDatabase();
 
         homeFragment = new HomeFragment();
         sunFragment = new SunFragment();
@@ -91,6 +104,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         sun.setOnClickListener(this);
         guanzhu.setOnClickListener(this);
         mys.setOnClickListener(this);
+        tuichu.setOnClickListener(this);
         //侧滑页监听
         ryqh.setOnClickListener(this);
 
@@ -118,7 +132,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         TextView qingchu = (TextView) menu.findViewById(R.id.cehua_lay_qingchu);
         TextView lixian = (TextView) menu.findViewById(R.id.cehua_lay_lixian);
         TextView jiancha = (TextView) menu.findViewById(R.id.cehua_lay_gengxian);
-        Button tuichu= (Button) menu.findViewById(R.id.chehua_lay_tuchi);
+        tuichu = (Button) menu.findViewById(R.id.chehua_lay_tuchi);
 
     }
 
@@ -143,7 +157,37 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 mys.setSelected(false);
                 break;
             case R.id.main_lay_down_yang:
-                cutFragment(sunFragment,homeFragment,guanZhuFragment,myFragment);
+                boolean wifi = NetChecket.isWifi(MainActivity.this);
+
+                //判断是否是Wifi
+                if(wifi){
+                    cutFragment(sunFragment,homeFragment,guanZhuFragment,myFragment);
+                }else{
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("当前是移动数据,是否查看详情");
+                    builder.setPositiveButton("土豪继续查看!!!!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            cutFragment(sunFragment,homeFragment,guanZhuFragment,myFragment);
+                            builder.create().dismiss();
+                        }
+                    });
+
+                    builder.setNegativeButton("设置Wifi网络", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //跳转到WIFI设置
+                            Intent intent = null;
+                            intent=new Intent("android.settings.WIFI_SETTINGS");
+                            startActivity(intent);
+                            builder.create().dismiss();
+                        }
+
+                    });
+
+                    builder.create().show();
+                }
+
                 home.setSelected(false);
                 sun.setSelected(true);
                 guanzhu.setSelected(false);
@@ -167,6 +211,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                 theme = (theme == R.style.AppTheme) ? R.style.NightAppTheme : R.style.AppTheme;
                 MainActivity.this.recreate();
+                break;
+            case R.id.chehua_lay_tuchi:
+                UserBean userBean = new UserBean();
+                SqlUtil.queryByLoginToUser(database,"1",userBean);
+                SqlUtil.updateLogin(database,userBean.getUname(),"0");
+
                 break;
 
         }

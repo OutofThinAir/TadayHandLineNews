@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class SunItemFragment extends Fragment{
 
-    private TextView textView;
+
     // 热点视频
     public static final String VIDEO_HOT_ID ="V9LG4B3A0";
     // 娱乐视频
@@ -45,7 +45,7 @@ public class SunItemFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.sun_item_frag_layout,null);
-        textView = (TextView) view.findViewById(R.id.sun_item_lay_text);
+
         listView = (ListView) view.findViewById(R.id.sun_item_list);
         return view;
     }
@@ -56,72 +56,72 @@ public class SunItemFragment extends Fragment{
         Bundle bundle = getArguments();
         String name = bundle.getString("name");
         if (name.equals("推荐")){
-            textView.setText("推荐");
+
             requseIntNet(VIDEO_HOT_ID);
         }
 
         if (name.equals("音乐")){
-            textView.setText("音乐");
+
             requseIntNet(VIDEO_ENTERTAINMENT_ID);
         }
 
         if (name.equals("搞笑")){
-            textView.setText("搞笑");
+
             requseIntNet(IDEO_FUN_ID);
         }
 
         if (name.equals("社会")){
-            textView.setText("社会");
+
             requseIntNet(VIDEO_CHOICE_ID);
         }
 
         if (name.equals("小品")){
-            textView.setText("小品");
+
             requseIntNet(VIDEO_ENTERTAINMENT_ID);
         }
 
         if (name.equals("生活")){
-            textView.setText("生活");
+
             requseIntNet(IDEO_FUN_ID);
         }
 
         if (name.equals("影视")){
-            textView.setText("影视");
+
             requseIntNet(VIDEO_CHOICE_ID);
         }
 
         if (name.equals("娱乐")){
-            textView.setText("娱乐");
+
             requseIntNet(VIDEO_ENTERTAINMENT_ID);
         }
 
         if (name.equals("呆萌")){
-            textView.setText("呆萌");
+
             requseIntNet(IDEO_FUN_ID);
         }
 
         if (name.equals("游戏")){
-            textView.setText("游戏");
+
             requseIntNet(VIDEO_CHOICE_ID);
         }
 
         if (name.equals("开眼")){
-            textView.setText("开眼");
+
             requseIntNet(IDEO_FUN_ID);
         }
 
         if (name.equals("再看一遍")){
-            textView.setText("再看一遍");
+
             requseIntNet(VIDEO_ENTERTAINMENT_ID);
         }
 
         if (name.equals("火山直播")){
-            textView.setText("火山直播");
+
             requseIntNet(VIDEO_CHOICE_ID);
         }
 
         if (name.equals("原创")){
-            textView.setText("原创");
+
             requseIntNet(VIDEO_ENTERTAINMENT_ID);
         }
 

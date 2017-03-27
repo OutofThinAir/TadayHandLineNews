@@ -12,11 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.outofthinair.tadaynews.R;
 import com.outofthinair.tadaynews.activity.ParticularsActivity;
 import com.outofthinair.tadaynews.adapter.ShouCangListAdapter;
 import com.outofthinair.tadaynews.bean.ShouCangBean;
+import com.outofthinair.tadaynews.bean.UserBean;
 import com.outofthinair.tadaynews.sqlite.MySqLite;
 import com.outofthinair.tadaynews.util.SqlUtil;
 
@@ -32,6 +34,8 @@ public class GuanZhuFragment extends Fragment {
     private ListView listView;
     private ArrayList<ShouCangBean> sList;
     private ShouCangListAdapter adapter;
+    private TextView textView01;
+    private TextView textView02;
 
     @Nullable
     @Override
@@ -39,12 +43,14 @@ public class GuanZhuFragment extends Fragment {
         View view = inflater.inflate(R.layout.guan_frag_layout,null);
         //初始化界面
         listView = (ListView) view.findViewById(R.id.guan_frag_list);
+        textView01 = (TextView) view.findViewById(R.id.guan_frag_text01);
+        textView02 = (TextView) view.findViewById(R.id.guan_frag_text02);
 
         return view;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         final MySqLite sqLite = new MySqLite(getActivity());
         database = sqLite.getWritableDatabase();
@@ -64,6 +70,14 @@ public class GuanZhuFragment extends Fragment {
                         sList.remove(sList.get(position));
                         adapter.notifyDataSetChanged();
                         builder.create().dismiss();
+                        if (sList.size()==0){
+                            listView.setVisibility(View.GONE);
+                            textView01.setVisibility(View.VISIBLE);
+
+                        }else{
+                            listView.setVisibility(View.VISIBLE);
+                            textView01.setVisibility(View.GONE);
+                        }
                     }
                 });
 
@@ -95,22 +109,41 @@ public class GuanZhuFragment extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden){
-            //查询数据库
-            ArrayList<ShouCangBean> list = new ArrayList<>();
-           SqlUtil.queryShouCang(database,list);
+            UserBean userBean=new UserBean();
+            SqlUtil.queryByLoginToUser(database,"1",userBean);
+            if (userBean.getUname()!=null){
+                listView.setVisibility(View.VISIBLE);
+                textView02.setVisibility(View.GONE);
+                textView01.setVisibility(View.GONE);
+                //查询数据库
+                ArrayList<ShouCangBean> list = new ArrayList<>();
+                SqlUtil.queryShouCang(database,list);
 
-            sList = new ArrayList<>();
+                sList = new ArrayList<>();
 
-            //倒叙遍历集合,后来居上
+                //倒叙遍历集合,后来居上
 
                 for (int i = list.size()-1; i>=0 ; i--) {
                     sList.add(list.get(i));
                 }
 
-            //设置适配器
-            adapter = new ShouCangListAdapter(getActivity(), sList);
-            listView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+                //设置适配器
+                adapter = new ShouCangListAdapter(getActivity(), sList);
+                listView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                //是否有收藏
+                if (list.size()==0){
+                    textView01.setVisibility(View.VISIBLE);
+                }else{
+                    textView01.setVisibility(View.GONE);
+                }
+            }else{
+                listView.setVisibility(View.GONE);
+                textView02.setVisibility(View.VISIBLE);
+                textView01.setVisibility(View.GONE);
+            }
+
+
         }else{
 
         }

@@ -56,7 +56,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:drawableTop="@drawable/main_down_button_guanzhu_selextor"
-            android:text="关注"
+            android:text="收藏"
             android:textColor="@drawable/main_down_text_selector"
 
             />

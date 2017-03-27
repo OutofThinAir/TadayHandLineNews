@@ -25,6 +25,7 @@ public class MyApplication extends Application {
         x.Ext.init(this);
         //不开启debug模式
         x.Ext.setDebug(false);
+
         SMSSDK.initSDK(this, "1c108d6b1e575", "b09e557f971a157a7a050fa2961b3fe3");
         //qq登录初始化
         UMShareAPI.get(this);

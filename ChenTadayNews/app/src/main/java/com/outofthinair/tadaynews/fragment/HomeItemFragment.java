@@ -1,10 +1,15 @@
 package com.outofthinair.tadaynews.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.media.audiofx.BassBoost;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -30,7 +35,9 @@ import com.outofthinair.tadaynews.activity.MainActivity;
 import com.outofthinair.tadaynews.activity.ParticularsActivity;
 import com.outofthinair.tadaynews.adapter.HomeFragmentListAdapter;
 import com.outofthinair.tadaynews.bean.GunggaoBean;
+import com.outofthinair.tadaynews.bean.UserBean;
 import com.outofthinair.tadaynews.sqlite.MySqLite;
+import com.outofthinair.tadaynews.util.NetChecket;
 import com.outofthinair.tadaynews.util.SqlUtil;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareAPI;
@@ -89,6 +96,10 @@ public class HomeItemFragment extends Fragment {
                     @Override
                     public void run() {
                         springView.onFinishFreshAndLoad();
+                        boolean haveNet = NetChecket.isHaveNet(getActivity());
+                        if (!haveNet){
+                            Toast.makeText(getActivity(), "网络连接失败,请查看", Toast.LENGTH_SHORT).show();
+                        }else{
                         Bundle bundle = getArguments();
                         String name =bundle.get("name").toString();
                         if (name=="推荐"){
@@ -275,7 +286,7 @@ public class HomeItemFragment extends Fragment {
                                     "update_version_code=6060&_rticket=1489540100356");
 
                         }
-
+                        }
                     }
                 }, 3000);
             }
@@ -541,13 +552,50 @@ public class HomeItemFragment extends Fragment {
                         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                JSONObject jsonObject = list.get(position);
+                                final JSONObject jsonObject = list.get(position);
                                 //Toast.makeText(getActivity(), "sdfsdfsa", Toast.LENGTH_SHORT).show();
                                 try {
+                                    boolean wifi = NetChecket.isWifi(getActivity());
+
+                                    //判断是否是Wifi
+                                    if(wifi){
                                     String url = jsonObject.getString("url");
                                     Intent intent = new Intent(getActivity(), ParticularsActivity.class);
                                     intent.putExtra("url",url);
                                     startActivity(intent);
+                                    }else{
+                                        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                        builder.setTitle("当前是移动数据,是否查看详情");
+                                        builder.setPositiveButton("土豪继续查看!!!!", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                String url = null;
+                                                try {
+                                                    url = jsonObject.getString("url");
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                Intent intent = new Intent(getActivity(), ParticularsActivity.class);
+                                                intent.putExtra("url",url);
+                                                startActivity(intent);
+                                                builder.create().dismiss();
+                                            }
+                                        });
+
+                                        builder.setNegativeButton("设置Wifi网络", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                //跳转到WIFI设置
+                                                Intent intent = null;
+                                                    intent=new Intent("android.settings.WIFI_SETTINGS");
+                                                startActivity(intent);
+                                                builder.create().dismiss();
+                                            }
+
+                                        });
+
+                                        builder.create().show();
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -571,14 +619,23 @@ public class HomeItemFragment extends Fragment {
                                shouc.setOnClickListener(new View.OnClickListener() {
                                    @Override
                                    public void onClick(View v) {
-                                       Toast.makeText(getActivity(), "收藏", Toast.LENGTH_SHORT).show();
+
                                        try {
                                            String title=jsonObject2.getString("title");
                                            String info=jsonObject2.getString("abstract");
                                            JSONObject middle_image = jsonObject2.getJSONObject("middle_image");
                                            String picUrl = middle_image.getString("url");
                                            String partiUrl = jsonObject2.getString("url");
-                                           SqlUtil.insertShoucan(database,title,info,picUrl,partiUrl);
+                                           //查询用户表,是否有登录用户
+                                           UserBean userBean=new UserBean();
+                                           SqlUtil.queryByLoginToUser(database,"1",userBean);
+                                           if(userBean.getUname()!=null){
+                                               SqlUtil.insertShoucan(database,title,info,picUrl,partiUrl);
+                                               Toast.makeText(getActivity(), "收藏成功", Toast.LENGTH_SHORT).show();
+                                           }else{
+                                               Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
+                                           }
+
 
                                        } catch (JSONException e) {
                                            e.printStackTrace();
@@ -605,6 +662,7 @@ public class HomeItemFragment extends Fragment {
                                            web.setTitle("This is music title");//标题
                                            web.setThumb(image);  //缩略图
                                            web.setDescription("my description");//描述
+
                                            new ShareAction(getActivity()).setPlatform(SHARE_MEDIA.QQ)
                                                    .withText("hello")
                                                    .withMedia(web)
