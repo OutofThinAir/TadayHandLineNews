@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="yuankuan" format="float"></attr>
+    <attr name="yuancolor" format="color"></attr>
+    <attr name="jinducolor" format="color"></attr>
+    <attr name="textcolor" format="color"></attr>
+
+    <declare-styleable name="MyView">
+        <attr name="yuankuan"/>
+        <attr name="yuancolor" />
+        <attr name="jinducolor" />
+        <attr name="textcolor" />
+    </declare-styleable>
+</resources>

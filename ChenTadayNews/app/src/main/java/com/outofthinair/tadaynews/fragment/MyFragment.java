@@ -110,6 +110,7 @@ public class MyFragment extends Fragment implements View.OnClickListener{
 
         initPlatforms();
 
+        //查询登录用户
         UserBean userBean = new UserBean();
         SqlUtil.queryByLoginToUser(database,"1",userBean);
         if (userBean.getUname()!=null){
@@ -121,6 +122,23 @@ public class MyFragment extends Fragment implements View.OnClickListener{
 
             x.image().bind(touxiang,userBean.getHeadPic(),options);
         }
+        //退出登录的接口回调
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setOnTuichu(new MainActivity.OnTuichu() {
+            @Override
+            public void tuichu(boolean flag) {
+                if (flag==false){
+                    //显示登录布局
+                    genLog.setVisibility(View.VISIBLE);
+                    linearLayout.setVisibility(View.VISIBLE);
+
+                    //隐藏用户信息布局
+                    touxiang.setVisibility(View.GONE);
+                    uname.setVisibility(View.GONE);
+                    guanzhud.setVisibility(View.GONE);
+                }
+            }
+        });
 
 
     }
@@ -311,11 +329,11 @@ public class MyFragment extends Fragment implements View.OnClickListener{
 
                 x.image().bind(touxiang,userBean.getHeadPic(),options);
             }else{
-                //隐藏登录布局
+                //显示登录布局
                 genLog.setVisibility(View.VISIBLE);
                 linearLayout.setVisibility(View.VISIBLE);
 
-                //显示用户信息布局
+                //隐藏用户信息布局
                 touxiang.setVisibility(View.GONE);
                 uname.setVisibility(View.GONE);
                 guanzhud.setVisibility(View.GONE);
@@ -329,8 +347,7 @@ public class MyFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //回调获得用户名密码
-        UMShareAPI.get(getActivity()).onActivityResult(requestCode, resultCode, data);
+
 
         //获得相册的回传值,---图片路径
         //获取图片路径

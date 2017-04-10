@@ -48,6 +48,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private MyFragment myFragment;
     private SlidingMenu menu;
     private TextView ryqh;
+    private OnTuichu ontuichu;
 
     // 默认是日间模式
     private int theme = R.style.AppTheme;
@@ -213,6 +214,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 MainActivity.this.recreate();
                 break;
             case R.id.chehua_lay_tuchi:
+                ontuichu.tuichu(false);
                 UserBean userBean = new UserBean();
                 SqlUtil.queryByLoginToUser(database,"1",userBean);
                 SqlUtil.updateLogin(database,userBean.getUname(),"0");
@@ -237,6 +239,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
 
+    //接口回调
+    public interface OnTuichu{
+        void tuichu(boolean flag);
+    }
+
+    public  void setOnTuichu(OnTuichu ontuichu){
+        this.ontuichu= ontuichu;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //回调获得用户名密码
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
 }
 
 
